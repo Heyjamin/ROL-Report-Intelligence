@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LECO ROL / ROQ / Stock Insight Report — 15-Nov-2026</title>
+<style>
+  :root {
+    --bg: #f7f8fa;
+    --surface: #ffffff;
+    --text: #1a1d23;
+    --muted: #5c6570;
+    --line: #d8dde3;
+    --accent: #0b5fff;
+    --warn: #b45309;
+    --danger: #b42318;
+    --ok: #067647;
+    --chip: #eef2f7;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    color: var(--text);
+    background: var(--bg);
+    line-height: 1.45;
+    font-size: 14px;
+  }
+  .page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 28px 24px 64px;
+  }
+  header.hero {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 28px 28px 22px;
+    margin-bottom: 20px;
+  }
+  .brand {
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  h1 {
+    margin: 0 0 8px;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .subtitle { color: var(--muted); margin: 0 0 16px; }
+  .toolbar {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+  }
+  button, .btn {
+    appearance: none;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font: inherit;
+    cursor: pointer;
+  }
+  button.primary, .btn.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  .callout {
+    background: #fff7ed;
+    border: 1px solid #fdba74;
+    color: #7c2d12;
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 20px;
+  }
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .kpi {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .kpi .label { color: var(--muted); font-size: 12px; margin-bottom: 6px; }
+  .kpi .value { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; }
+  .kpi.danger .value { color: var(--danger); }
+  .kpi.warn .value { color: var(--warn); }
+  .kpi.ok .value { color: var(--ok); }
+  section {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 20px 22px;
+    margin-bottom: 16px;
+  }
+  h2 {
+    margin: 0 0 6px;
+    font-size: 18px;
+    font-weight: 700;
+  }
+  h3 {
+    margin: 18px 0 8px;
+    font-size: 15px;
+    font-weight: 650;
+  }
+  .section-note { color: var(--muted); margin: 0 0 14px; font-size: 13px; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+  }
+  th, td {
+    border-bottom: 1px solid var(--line);
+    padding: 8px 8px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th {
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    background: #f3f5f8;
+  }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  tr.critical td { background: #fef3f2; }
+  tr.below td { background: #fffbeb; }
+  tr.gain td { background: #ecfdf3; }
+  tr.drop td { background: #fef3f2; }
+  .chip {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--chip);
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .chip.critical { background: #fee4e2; color: var(--danger); }
+  .chip.below { background: #fef0c7; color: var(--warn); }
+  .chip.ok { background: #d1fadf; color: var(--ok); }
+  ol.insights { margin: 0; padding-left: 20px; }
+  ol.insights li { margin: 0 0 8px; }
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .bars {
+    display: grid;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .bar-row { display: grid; grid-template-columns: 110px 1fr 40px; gap: 8px; align-items: center; }
+  .bar-track {
+    height: 10px;
+    background: #e8edf3;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 999px;
+  }
+  footer {
+    margin-top: 24px;
+    color: var(--muted);
+    font-size: 12px;
+    text-align: center;
+  }
+  @media (max-width: 900px) {
+    .kpi-grid, .two-col { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 600px) {
+    .kpi-grid, .two-col { grid-template-columns: 1fr; }
+  }
+  @media print {
+    body { background: #fff; font-size: 11px; }
+    .page { max-width: none; padding: 0; }
+    .toolbar { display: none !important; }
+    header.hero, section, .kpi, .callout {
+      border-radius: 0;
+      box-shadow: none;
+      break-inside: avoid;
+    }
+    table { page-break-inside: auto; }
+    tr { page-break-inside: avoid; }
+    thead { display: table-header-group; }
+    h2, h3 { page-break-after: avoid; }
+    a[href]::after { content: ""; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="hero">
+    <div class="brand">Lanka Electricity Company (Pvt) Ltd</div>
+    <h1>ROL / ROQ / Stock Insight Report</h1>
+    <p class="subtitle">
+      Re-Order Report comparison · <strong>ROL 02.csv</strong> (30-Sep-2026) →
+      <strong>ROL 01.csv</strong> (15-Nov-2026)
+    </p>
+    <div class="toolbar">
+      <button class="primary" onclick="window.print()">Print / Save as PDF</button>
+      <button onclick="window.scrollTo({top: document.body.scrollHeight, behavior:'smooth'})">Jump to actions</button>
+    </div>
+  </header>
+
+  <div class="callout">
+    <strong>Headline:</strong> Below-ROL improved <strong>51 → 49</strong>.
+    Gap value-at-risk fell <strong>LKR 807.6M → 714.4M</strong> (−11.5%).
+    Priority lines: <strong>B322</strong>, metering chain (H161A / N118 / R025B / M983A),
+    <strong>F402B</strong>, and B322 accessories <strong>G188B / G175</strong>.
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi"><div class="label">Stock items (Nov)</div><div class="value">434</div></div>
+    <div class="kpi danger"><div class="label">Below ROL (Nov)</div><div class="value">49</div></div>
+    <div class="kpi warn"><div class="label">Zero stock (Nov)</div><div class="value">56</div></div>
+    <div class="kpi"><div class="label">Reorder candidates</div><div class="value">50</div></div>
+    <div class="kpi"><div class="label">Sum Stock Total</div><div class="value">2.82M</div></div>
+    <div class="kpi"><div class="label">Sum ROL</div><div class="value">2.15M</div></div>
+    <div class="kpi"><div class="label">Sum ROQ</div><div class="value">3.12M</div></div>
+    <div class="kpi danger"><div class="label">Gap value at risk</div><div class="value">LKR 714M</div></div>
+  </div>
+
+  <section>
+    <h2>1. Snapshot comparison</h2>
+    <p class="section-note">Catalogue totals from <code>rol_analysis_output.json</code>.</p>
+    <table>
+      <thead>
+        <tr>
+          <th>KPI</th>
+          <th class="num">30-Sep-2026</th>
+          <th class="num">15-Nov-2026</th>
+          <th class="num">Change</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Stock item lines</td><td class="num">433</td><td class="num">434</td><td class="num">+1 (P715T)</td></tr>
+        <tr><td>Items with ROL &gt; 0</td><td class="num">256</td><td class="num">257</td><td class="num">+1</td></tr>
+        <tr><td>Items below ROL</td><td class="num">51</td><td class="num"><strong>49</strong></td><td class="num">−2</td></tr>
+        <tr><td>At / above ROL</td><td class="num">205</td><td class="num">208</td><td class="num">+3</td></tr>
+        <tr><td>Zero-stock items</td><td class="num">58</td><td class="num">56</td><td class="num">−2</td></tr>
+        <tr><td>ROL=0 &amp; ROQ=0</td><td class="num">177</td><td class="num">177</td><td class="num">0</td></tr>
+        <tr><td>Sum Stock Total</td><td class="num">2,878,866</td><td class="num">2,821,838</td><td class="num">−57,028</td></tr>
+        <tr><td>Sum ROL</td><td class="num">2,329,512</td><td class="num">2,146,035</td><td class="num">−183,477</td></tr>
+        <tr><td>Sum ROQ</td><td class="num">3,385,627</td><td class="num">3,122,430</td><td class="num">−263,197</td></tr>
+        <tr><td>Gap value at risk (LKR)</td><td class="num">807,559,550</td><td class="num">714,438,168</td><td class="num">−93,121,382</td></tr>
+        <tr><td>Reorder candidates</td><td class="num">52</td><td class="num">50</td><td class="num">−2</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Matched-item movement (433 common codes)</h3>
+    <table>
+      <thead><tr><th>Signal</th><th>Result</th></tr></thead>
+      <tbody>
+        <tr><td>Stock decreased / increased / unchanged</td><td>159 / 49 / 225</td></tr>
+        <tr><td>ROL changed / ROQ changed</td><td>189 / 189</td></tr>
+        <tr><td>Healthy → below ROL</td><td>4 (B343, G332, H162A, R025D)</td></tr>
+        <tr><td>Below → healthy</td><td>5 (G271A, M004, M037D, M983I, P725K)</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div class="two-col">
+    <section>
+      <h2>2. Stock vs ROL ratio (Nov)</h2>
+      <p class="section-note">257 items with ROL &gt; 0</p>
+      <div class="bars" id="bucketBars"></div>
+    </section>
+    <section>
+      <h2>3. Item type mix (Nov)</h2>
+      <p class="section-note">Full catalogue 434 lines</p>
+      <div class="bars" id="typeBars"></div>
+    </section>
+  </div>
+
+  <section>
+    <h2>4. Key insights</h2>
+    <ol class="insights">
+      <li>Below-ROL improved 51 → 49; value-at-risk fell LKR 807.6M → 714.4M (−11.5%) while portfolio stock eased 2.879M → 2.822M units.</li>
+      <li><strong>B322</strong> remains the largest qty gap: stock 19 vs ROL 372,309 (gap value ~LKR 147M) — open PO ~512k has not yet restored ops stock.</li>
+      <li>Metering chain is stressed together: H161A (6), N118 (68), R025B (186), R025D (88), M983A seals — treat as one replenishment programme.</li>
+      <li>F402B MCB still deeply short (12,579 vs ROL 54,570) with large open PO — expedite delivery rather than cut ROL again.</li>
+      <li>G188B / G175 track B322 burn — raise accessory cover with the parent cable, not after.</li>
+      <li>Largest stock drop: M983A (−20,500). Largest gain: M983I (+38,000).</li>
+      <li>ROL and ROQ each changed on 189 items (mostly usage-driven downward revisions).</li>
+      <li>Of 257 active-ROL items, 166 hold ≥2× ROL — review for capital lock-up while chasing 32 items under 0.5× ROL.</li>
+      <li>177 items have ROL=0 and ROQ=0 — mid-year revision should set rules where usage exists and clear dead stock.</li>
+      <li>Several top gaps still carry reorder flag = No (B322, M983A, G188B) — review flag logic vs gap severity.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>5. Detailed — items below ROL (15-Nov)</h2>
+    <p class="section-note">Top gaps by quantity shortfall. Recommended order ≈ max(ROQ, Gap). Showing top 40 of 49 below-ROL lines.</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Code</th>
+          <th>Description</th>
+          <th class="num">Stock</th>
+          <th class="num">ROL</th>
+          <th class="num">ROQ</th>
+          <th class="num">Gap</th>
+          <th class="num">Gap value (LKR)</th>
+          <th>Flag</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="belowBody"></tbody>
+    </table>
+  </section>
+
+  <div class="two-col">
+    <section>
+      <h2>6. Largest stock drops</h2>
+      <p class="section-note">Sep → Nov</p>
+      <table>
+        <thead><tr><th>Code</th><th>Description</th><th class="num">Delta</th></tr></thead>
+        <tbody>
+          <tr class="drop"><td>M983A</td><td>Meter seals plastic blue</td><td class="num">−20,500</td></tr>
+          <tr class="drop"><td>B322</td><td>Service drop twin 16mm2</td><td class="num">−11,767</td></tr>
+          <tr class="drop"><td>G422</td><td>INS T-OFF CON 35-70/6-35</td><td class="num">−11,586</td></tr>
+          <tr class="drop"><td>M983C</td><td>Meter sealing ferrule</td><td class="num">−9,000</td></tr>
+          <tr class="drop"><td>G188B</td><td>Cable support for B322</td><td class="num">−8,700</td></tr>
+          <tr class="drop"><td>G175</td><td>Clamp dead end B322</td><td class="num">−6,134</td></tr>
+          <tr class="drop"><td>M984A</td><td>Meter sealing wire SS</td><td class="num">−5,900</td></tr>
+          <tr class="drop"><td>B342</td><td>Service drop 4C 16mm2</td><td class="num">−5,650</td></tr>
+        </tbody>
+      </table>
+    </section>
+    <section>
+      <h2>7. Largest stock gains</h2>
+      <p class="section-note">Sep → Nov</p>
+      <table>
+        <thead><tr><th>Code</th><th>Description</th><th class="num">Delta</th></tr></thead>
+        <tbody>
+          <tr class="gain"><td>M983I</td><td>Synthetic meter seal</td><td class="num">+38,000</td></tr>
+          <tr class="gain"><td>M983J</td><td>Synthetic meter seal</td><td class="num">+38,000</td></tr>
+          <tr class="gain"><td>G374A</td><td>Lug 54mm2 bimetallic</td><td class="num">+1,730</td></tr>
+          <tr class="gain"><td>P725K</td><td>Bolt double crossarm</td><td class="num">+388</td></tr>
+          <tr class="gain"><td>P632</td><td>Armbrace type 2</td><td class="num">+235</td></tr>
+          <tr class="gain"><td>N167D</td><td>Smart meter 3ph 4W 4G</td><td class="num">+168</td></tr>
+          <tr class="gain"><td>P621C</td><td>Crossarm shoe type 2</td><td class="num">+149</td></tr>
+          <tr class="gain"><td>M004</td><td>File covers with lace</td><td class="num">+117</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </div>
+
+  <section>
+    <h2>8. ROL / ROQ revisions (selected high-impact)</h2>
+    <table>
+      <thead>
+        <tr><th>Code</th><th>Metric</th><th class="num">30-Sep</th><th class="num">15-Nov</th><th class="num">Change</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>B322</td><td>ROL</td><td class="num">413,187</td><td class="num">372,309</td><td class="num">−40,878</td></tr>
+        <tr><td>B322</td><td>ROQ</td><td class="num">619,781</td><td class="num">558,464</td><td class="num">−61,317</td></tr>
+        <tr><td>M983A</td><td>ROL</td><td class="num">309,500</td><td class="num">283,500</td><td class="num">−26,000</td></tr>
+        <tr><td>R025B</td><td>ROL</td><td class="num">37,425</td><td class="num">28,512</td><td class="num">−8,913</td></tr>
+        <tr><td>N118</td><td>ROL</td><td class="num">32,219</td><td class="num">24,855</td><td class="num">−7,364</td></tr>
+        <tr><td>G188B</td><td>ROL</td><td class="num">121,508</td><td class="num">115,175</td><td class="num">−6,333</td></tr>
+        <tr><td>F402B</td><td>ROL</td><td class="num">58,779</td><td class="num">54,570</td><td class="num">−4,209</td></tr>
+        <tr><td>H161A</td><td>ROL</td><td class="num">22,049</td><td class="num">19,544</td><td class="num">−2,505</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="actions">
+    <h2>9. Recommended actions</h2>
+    <ol class="insights">
+      <li><strong>Expedite open POs / transfers</strong> for B322, F402B, G188B, H161A, N118, R025B, M983A (coverage exists; warehouse stock does not).</li>
+      <li><strong>Raise / top-up</strong> where gap is large and PO thin: F330, G254, G501A, G451, M022, M007A/B, P711J, stationery zero-stock lines.</li>
+      <li><strong>Treat metering as one programme</strong> — enclosure + meter + comm module + seals must move together.</li>
+      <li><strong>Mid-year ROL hygiene</strong> — set or clear ROL for 177 zero-ROL/ROQ items; sync accessory ROL with parent demand (B322 family).</li>
+      <li><strong>Reconcile project vs operation stock</strong> for I571 and similar annotated lines before new buys.</li>
+    </ol>
+  </section>
+
+  <footer>
+    Generated for LECO ROL Project · Sources: ROL 01.csv, ROL 02.csv, rol_analysis_output.json · Light theme printable report
+  </footer>
+</div>
+
+<script>
+const buckets = [
+  { label: "stock = 0", count: 5 },
+  { label: "< 0.5× ROL", count: 27 },
+  { label: "0.5–1×", count: 17 },
+  { label: "1–1.5×", count: 26 },
+  { label: "1.5–2×", count: 16 },
+  { label: "≥ 2×", count: 166 },
+];
+const types = [
+  { label: "IMP", count: 214 },
+  { label: "L", count: 131 },
+  { label: "L2", count: 57 },
+  { label: "IPM", count: 29 },
+  { label: "(blank)", count: 3 },
+];
+const below = [
+  ["B322","SERVICE DROP TWIN 16mm2",19,372309,558464,372290,147322599,"No","critical"],
+  ["M983A","SEALS METER PLASTIC BLUE LEC 1",67000,283500,425250,216500,7856785,"No","critical"],
+  ["G188B","Cable Support FOR B322",41000,115175,169375,74175,9232562,"No","critical"],
+  ["G175","CLAMP S/ DEAD END FOR B322",40279,82886,121892,42607,14192392,"Yes","critical"],
+  ["F402B","M.C.B. 1Ph 32A T D W/O Encl.",12579,54570,80250,41991,16707799,"No","critical"],
+  ["R025B","Comm. Module Ante 1P IOT A1",186,28512,28512,28326,80275601,"Yes","critical"],
+  ["N118","Static Meter 5/30A Imp/Exp",68,24855,24855,24787,238009731,"Yes","critical"],
+  ["G254","Connector 16mm2 to MCB",15380,35918,52821,20538,1698493,"Yes","critical"],
+  ["H161A","S/Phase Meter Enclosure",6,19544,19544,19538,57166625,"Yes","critical"],
+  ["M007A","Application Form - S",3500,16500,22000,13000,70070,"Yes","critical"],
+  ["N118D","Smart Meter 1P 2W 4G",4202,16859,16859,12657,93829758,"No","critical"],
+  ["M04659","Meter Seal Docket",2,5572,7429,5570,2596177,"No","critical"],
+  ["M04630","Agreement Forms (S)",0,4125,5500,4125,31845,"No","critical"],
+  ["R026D","Comm. Module Ante 3P 4G",2726,6548,6548,3822,8066828,"No","below"],
+  ["M007B","Application Form - ENG.",3000,6750,9000,3750,25050,"Yes","below"],
+  ["G501A","ROD EARTHING",180,2991,4398,2811,3152143,"No","critical"],
+  ["R025D","Comm. Module Ante 1P 4G",88,2342,2342,2254,4930670,"No","critical"],
+  ["M04664","Meter Sticker",22700,24825,33100,2125,4378,"Yes","below"],
+  ["G451","LINE TAP SPLIT BOLT",134,1993,2931,1859,1152431,"No","critical"],
+  ["B114","Conductor Cu. Earth 10mm2",500,2300,3450,1800,879336,"Yes","critical"],
+  ["P711I","BOLT & NUT M12X225MM WITH FLAT",9087,10348,15522,1261,312905,"Yes","below"],
+  ["J152","FUSE-LINK 10A",156,1233,1813,1077,392373,"No","critical"],
+  ["P711J","BOLT & NUT M12X250MM WITH FLAT",0,877,1316,877,258575,"No","critical"],
+  ["I111S","INSU. 11KV LINE POST 165MM",117,860,1265,743,3666118,"No","critical"],
+  ["F330","FUSE HRC 250A SIZE 1",176,880,1294,704,372317,"Yes","critical"],
+  ["B343","SERVICE DROP 4CORE 25mm2",19698,20354,30531,656,681951,"Yes","below"],
+  ["M022","A4 80gsm P/Copy Paper",8,632,947,624,550505,"Yes","critical"],
+  ["M04630B","Agreement Forms (ENG.)",0,375,500,375,4016,"No","critical"],
+  ["M04450","Vehicle Running Chart",0,352,469,352,87240,"No","critical"],
+  ["G733B","TIE P/F SIDE SINGLE 60MM AAC",881,1217,1790,336,368676,"Yes","below"],
+  ["F416","Enclosure For MCB 3 Phase",414,731,1075,317,200293,"Yes","below"],
+  ["G332","LUG TERMINAL 16MM2 CU",7107,7423,10917,316,608790,"Yes","below"],
+  ["N280D","METER-CT CONNEC. E/DEM STATIC",464,728,1071,264,7936144,"Yes","below"],
+  ["M04642","Observation Docket",20,223,297,203,136911,"Yes","critical"],
+  ["I571","INSULATOR TEN/DISC U70 BL",0,125,183,125,410663,"No","critical"],
+  ["N167","Smart Meter 3ph 4W",27,124,124,97,1044287,"No","critical"],
+  ["F221B","S/L Control Panel 30A",128,173,260,45,2128783,"Yes","below"],
+  ["R026B","Comm. Module Ante 3P IOT A1",382,426,426,44,142316,"No","below"],
+  ["M04650","Cons. Estimate Bks.",103,135,180,32,10793,"Yes","below"],
+  ["G735C","TIE P/F SIDE DOUBLE 150 AAC",327,354,521,27,5033,"Yes","below"],
+];
+
+function fmt(n) {
+  return Number(n).toLocaleString("en-LK");
+}
+function renderBars(el, data) {
+  const max = Math.max(...data.map(d => d.count));
+  el.innerHTML = data.map(d => `
+    <div class="bar-row">
+      <div>${d.label}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${(100*d.count/max).toFixed(1)}%"></div></div>
+      <div class="num">${d.count}</div>
+    </div>`).join("");
+}
+renderBars(document.getElementById("bucketBars"), buckets);
+renderBars(document.getElementById("typeBars"), types);
+
+document.getElementById("belowBody").innerHTML = below.map(r => {
+  const sev = r[8];
+  return `<tr class="${sev}">
+    <td><strong>${r[0]}</strong></td>
+    <td>${r[1]}</td>
+    <td class="num">${fmt(r[2])}</td>
+    <td class="num">${fmt(r[3])}</td>
+    <td class="num">${fmt(r[4])}</td>
+    <td class="num">${fmt(r[5])}</td>
+    <td class="num">${fmt(r[6])}</td>
+    <td>${r[7]}</td>
+    <td><span class="chip ${sev}">${sev === "critical" ? "Critical" : "Below ROL"}</span></td>
+  </tr>`;
+}).join("");
+</script>
+</body>
+</html>

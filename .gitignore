@@ -1,0 +1,51 @@
+# Dependencies
+node_modules/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.Python
+
+# Build
+dist/
+build/
+*.tsbuildinfo
+.next/
+out/
+
+# Env & secrets
+.env
+.env.local
+.env.*.local
+*.pem
+
+# IDE / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Logs & coverage
+logs/
+*.log
+npm-debug.log*
+coverage/
+.nyc_output/
+
+# Runtime / local DB
+*.sqlite
+*.sqlite3
+apps/api/data/
+uploads/
+tmp/
+temp/
+
+# Docker
+.docker/
+
+# Python
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/

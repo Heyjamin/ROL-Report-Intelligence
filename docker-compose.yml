@@ -1,0 +1,38 @@
+version: "3.9"
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    volumes:
+      - api-data:/app/data
+    depends_on:
+      - analytics
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    ports:
+      - "5173:80"
+    environment:
+      - VITE_API_URL=http://localhost:3000
+      - VITE_ANALYTICS_URL=http://localhost:8000
+    depends_on:
+      - api
+
+  analytics:
+    build:
+      context: apps/analytics
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+
+volumes:
+  api-data:

@@ -1,0 +1,31 @@
+:root {
+  --rol-navy: #0a2540;
+  --rol-navy-light: #143552;
+  --rol-page-bg: #f0f3f7;
+  --rol-surface: #ffffff;
+  --rol-border: #e2e8f0;
+  --rol-success: #16a34a;
+  --rol-warning: #f59e0b;
+  --rol-danger: #dc2626;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  background: var(--rol-page-bg);
+  color: #0f172a;
+}
+
+a {
+  color: inherit;
+}
